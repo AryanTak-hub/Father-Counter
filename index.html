@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Father Counter</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 1s ease-out;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #ffde59;
+            text-shadow: 0 0 10px rgba(255, 223, 89, 0.6), 0 0 20px rgba(255, 223, 89, 0.4);
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #dfe9f3;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            margin: 10px 0 20px;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff512f, #dd2476);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 10px;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(255, 0, 150, 0.4);
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+            background: rgba(0, 0, 0, 0.7); /* Dark background for better visibility */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .result.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        canvas {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="captureArea">
+        <h1>Father Counter</h1>
+        <p>Enter your friend's name to uncover the truth!</p>
+        <input type="text" id="friendName" placeholder="Enter friend's name">
+        <button onclick="countFathers()">Reveal</button>
+        <button id="resetButton" style="display: none;" onclick="resetGame()">Reset</button>
+        <div class="result" id="result"></div>
+        <button id="shareButton" style="display: none;" onclick="shareResult()">Share Result</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function countFathers() {
+            const friendName = document.getElementById('friendName').value.trim();
+            const resultDiv = document.getElementById('result');
+            const resetButton = document.getElementById('resetButton');
+            const shareButton = document.getElementById('shareButton');
+
+            if (friendName === "") {
+                alert("Please enter your friend's name!");
+                return;
+            }
+
+            const numOfFathers = Math.floor(Math.random() * 100) + 1;
+
+            // Display the result
+            resultDiv.innerHTML = `
+                <p><strong>${friendName}</strong> has <strong>${numOfFathers}</strong> fathers!</p>
+                <p>That's shocking! Share it with others!</p>
+            `;
+            resultDiv.classList.add('visible');
+            resetButton.style.display = "inline-block";
+            shareButton.style.display = "inline-block";
+        }
+
+        function resetGame() {
+            document.getElementById('friendName').value = "";
+            const resultDiv = document.getElementById('result');
+            const resetButton = document.getElementById('resetButton');
+            const shareButton = document.getElementById('shareButton');
+
+            resultDiv.innerHTML = "";
+            resultDiv.classList.remove('visible');
+            resetButton.style.display = "none";
+            shareButton.style.display = "none";
+        }
+
+        function shareResult() {
+            const captureArea = document.getElementById('captureArea');
+
+            // Temporarily set a solid dark background for the capture area
+            captureArea.style.background = "#1c1c1c";
+            captureArea.style.color = "#fff";
+
+            // Generate image from the result
+            html2canvas(captureArea).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'FatherCounterResult.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                // Reset background after capturing
+                captureArea.style.background = "rgba(255, 255, 255, 0.1)";
+            });
+        }
+    </script>
+</body>
+</html>
